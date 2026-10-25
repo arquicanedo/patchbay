@@ -1,7 +1,8 @@
 # Patchbay
 
 A block editor for turning recorded ADS-B aircraft data into sound, part of the Pitchaxis project. It is described in
-the technical note *Patchbay: a block model for the sonification of ADS-B aircraft data*, whose source is in `note/`.
+the technical note *Patchbay: a block model for the sonification of ADS-B aircraft data*
+([doi:10.5281/zenodo.23647089](https://doi.org/10.5281/zenodo.23647089)), whose source is in `note/`.
 
 ![The Patchbay editor with one of the bundled examples playing: the block library on the left, the patch in the middle, and the radar scope on the right](note/figures/editor.png)
 
@@ -52,6 +53,11 @@ were removed. Everything else is as recorded, including the antenna position, ca
 
 "Close pass" in the Closest pair block is a prediction from recorded positions. It is not an assessment of separation,
 and Patchbay is not an operational tool.
+
+## Citation
+
+Canedo, A. (2026). *Patchbay: a block model for the sonification of ADS-B aircraft data* (Technical note). Zenodo.
+https://doi.org/10.5281/zenodo.23647089
 
 ## Licence
 

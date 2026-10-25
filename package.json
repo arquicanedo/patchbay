@@ -1,0 +1,12 @@
+{
+  "name": "patchbay",
+  "private": true,
+  "description": "A block editor for turning recorded ADS-B aircraft data into sound",
+  "license": "MIT",
+  "scripts": {
+    "test": "node editor/test-duet.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.60.0"
+  }
+}

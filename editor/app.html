@@ -1,0 +1,342 @@
+<title>pitchaxis patchbay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..700&family=Chivo+Mono:wght@400;500&display=swap">
+<style>
+/* A matte rack of silk-screened modules in the dark. Only signal emits light.
+   Engraved text (static labels) is Archivo caps; what the machine says (numbers) is mono. Never mixed in one label. */
+:root {
+  color-scheme: dark;
+  --bg-0: #0d0f11; --bg-1: #13161a; --bg-2: #1a1e23; --bg-3: #0a0c0e; --bg-4: #242a31;
+  --hair: #2a3037; --hair-2: #3b434c;
+  --ink-1: #eceff2; --ink-2: #a2abb5; --ink-3: #69727c;
+  --accent: #f2f4f5;
+  --k-traffic: #35d6b4; --k-value: #5a93ff; --k-event: #ff5aa5; --k-audio: #ffb22e;
+  --i-traffic: #1d5f52; --i-value: #2c4470; --i-event: #6e2d4c; --i-audio: #6e501d;
+  --warn: #ff5c3a;
+  --scope: #07090b; --line: #2a3037; --muted: #a2abb5; --ink: #eceff2;
+  --f-eng: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --f-mono: "Chivo Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { background: var(--bg-0); color: var(--ink-1); font: 400 12.5px/1.5 var(--f-eng); overflow: hidden; -webkit-font-smoothing: antialiased; }
+button, select, input { font: inherit; color: inherit; }
+:focus-visible { outline: 1px solid var(--accent); outline-offset: 1px; }
+
+/* engraved: every static label */
+.lbl, .brand, .pr, .palette h3, .pal, .side h2, .ctl label, .seg > label, .pick > label, .btn, .ib, .nt, .seg button, .key span, .insp summary, .insp .hint {
+  font-family: var(--f-eng); font-weight: 600; font-stretch: 85%; font-size: 10px; line-height: 1; text-transform: uppercase; letter-spacing: .06em;
+}
+
+.app { height: 100%; display: grid; grid-template-rows: 44px 1fr; }
+.bar { display: flex; align-items: center; gap: 10px; padding: 0 12px; background: var(--bg-1); border-bottom: 1px solid var(--hair); overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+.bar::-webkit-scrollbar { display: none; }
+.bar > * { flex: none; }
+.brand { font-size: 14px; font-stretch: 100%; font-weight: 700; letter-spacing: .12em; margin-right: 4px; }
+.spacer { flex: 1 1 0 !important; min-width: 0; }
+.btn { height: 26px; padding: 0 10px; border: 1px solid var(--hair-2); background: var(--bg-2); border-radius: 2px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.btn:hover:not(:disabled) { background: var(--bg-4); }
+.btn:disabled { color: var(--ink-3); border-color: var(--hair); background: var(--bg-1); cursor: default; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--bg-0); }
+.bar .btn { height: 32px; padding: 0 12px; }
+.ib { width: 32px; height: 32px; padding: 0; font-size: 13px; letter-spacing: 0; border: 1px solid var(--hair-2); background: var(--bg-2); border-radius: 2px; cursor: pointer; display: inline-grid; place-items: center; }
+.ib:hover { background: var(--bg-4); }
+.ib.play[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg-0); }
+.ib.rec[aria-pressed="true"] { background: var(--warn); border-color: var(--warn); color: var(--bg-0); }
+.disp { width: 210px; height: 32px; padding: 5px 10px 0; background: var(--bg-3); border: 1px solid var(--hair); border-radius: 2px; display: flex; flex-direction: column; gap: 4px; }
+.clock { font: 500 13px/1 var(--f-mono); font-variant-numeric: tabular-nums; color: var(--ink-1); }
+#scrub { width: 100%; height: 4px; margin: 0; -webkit-appearance: none; appearance: none; background: var(--hair-2); border-radius: 0; cursor: pointer; }
+#scrub::-webkit-slider-thumb { -webkit-appearance: none; width: 6px; height: 12px; background: var(--accent); border: 0; border-radius: 1px; }
+#scrub::-moz-range-thumb { width: 6px; height: 12px; background: var(--accent); border: 0; border-radius: 1px; }
+.bar .ctl { width: 96px; border: 1px solid var(--hair); background: var(--bg-3); border-radius: 2px; }
+
+.lbl { color: var(--ink-2); }
+
+/* segmented, pick, scrub: the three ways a parameter is touched */
+.seg { display: flex; align-items: center; gap: 8px; }
+.seg > label { color: var(--ink-2); flex: none; }
+.seg .cells { display: flex; flex: 1; gap: 1px; background: var(--hair); border: 1px solid var(--hair); border-radius: 2px; overflow: hidden; }
+.seg button { flex: 1; height: 22px; padding: 0 6px; border: 0; background: var(--bg-3); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.seg button:hover:not(.on) { background: var(--bg-4); color: var(--ink-1); }
+.seg button.on { background: var(--c, var(--accent)); color: var(--bg-0); }
+.bar .seg .cells { flex: none; height: 28px; }
+.bar .seg button { height: 26px; min-width: 32px; }
+
+.pick { display: flex; align-items: center; gap: 8px; }
+.pick > label { color: var(--ink-2); flex: none; }
+.pick .well { position: relative; display: flex; flex: 1; align-items: center; height: 22px; min-width: 0; background: var(--bg-3); border: 1px solid var(--hair); border-radius: 2px; }
+.pick .v { flex: 1; min-width: 0; text-align: center; font: 500 12px/1 var(--f-mono); color: var(--ink-1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 2px; pointer-events: none; }
+.pick .well button { position: relative; z-index: 2; width: 20px; height: 100%; border: 0; background: none; color: var(--ink-2); cursor: pointer; padding: 0; font-size: 0; }
+.pick .well button::before, .ctl.step > button::before { content: ""; position: absolute; left: 50%; top: 50%; margin: -4px 0 0 -3px; border: solid transparent; border-width: 4px 5px 4px 0; border-right-color: currentColor; }
+.pick .well button[data-d="1"]::before, .ctl.step > button[data-d="1"]::before { margin-left: -2px; border-width: 4px 0 4px 5px; border-right-color: transparent; border-left-color: currentColor; }
+.pick .well button:hover { background: var(--bg-4); color: var(--ink-1); }
+.pick .well:hover { background: var(--bg-4); }
+.pick .ed { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 1; pointer-events: auto; }
+.pick.menu .well { padding: 0 8px; }
+.pick.menu .v { text-align: left; font: 600 10px/1 var(--f-eng); font-stretch: 85%; letter-spacing: .06em; text-transform: uppercase; }
+.bar .pick .well { height: 28px; width: 190px; }
+.bar .pick.menu .well { width: 150px; }
+
+.ctl { position: relative; display: flex; align-items: center; gap: 7px; min-height: 30px; padding: 3px 7px; cursor: ns-resize; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.ctl:hover { background: var(--bg-4); }
+.ctl.drag { box-shadow: inset 0 -2px 0 var(--accent); }
+.ctl.drag .v b { color: var(--accent); }
+.ctl.flash { outline: 1px solid var(--warn); outline-offset: -1px; }
+.ctl.reset { outline: 1px solid var(--accent); outline-offset: -1px; }
+.ctl .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.ctl label { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+.ctl .v { font: 400 10px/1 var(--f-mono); color: var(--ink-2); white-space: nowrap; pointer-events: none; }
+.ctl .v b { font: 500 12.5px/1 var(--f-mono); font-variant-numeric: tabular-nums; color: var(--ink-1); }
+.ctl .v em { font-style: normal; margin-left: 3px; }
+.ctl .ed { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; pointer-events: none; border: 0; margin: 0; padding: 0 7px; background: var(--bg-3); color: var(--ink-1); font: 500 12.5px/1 var(--f-mono); -moz-appearance: textfield; }
+.ctl .ed::-webkit-inner-spin-button, .ctl .ed::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.ctl.editing { cursor: text; }
+.ctl.editing .ed { opacity: 1; pointer-events: auto; outline: 1px solid var(--accent); outline-offset: -1px; }
+.ctl.step { padding: 3px 2px; gap: 0; }
+.ctl.step > button { width: 16px; height: 24px; flex: none; border: 0; background: none; color: var(--ink-2); font-size: 0; padding: 0; cursor: pointer; position: relative; z-index: 2; }
+.ctl.step > button:hover { color: var(--ink-1); background: var(--bg-4); }
+.ctl.step .tx { align-items: center; }
+svg.knob { width: 28px; height: 28px; flex: none; pointer-events: none; overflow: visible; }
+svg.knob path { fill: none; stroke-linecap: round; }
+svg.knob .kt { stroke: var(--hair-2); stroke-width: 2; }
+svg.knob .ka { stroke: var(--c, var(--accent)); stroke-width: 2; }
+svg.knob .kp { stroke: var(--ink-1); stroke-width: 1.5; stroke-linecap: round; }
+svg.knob .kd { stroke: var(--ink-2); stroke-width: 1; }
+
+.main { min-height: 0; display: grid; grid-template-columns: 132px minmax(0, 1fr) 240px; }
+.palette { border-right: 1px solid var(--hair); background: var(--bg-1); overflow-y: auto; padding: 8px 8px 14px; display: flex; flex-direction: column; gap: 10px; scrollbar-width: thin; scrollbar-color: var(--hair-2) transparent; }
+.palette h3 { margin: 0 0 4px; font-size: 10px; color: var(--ink-2); }
+.palette .items { display: flex; flex-direction: column; gap: 2px; }
+.pal { display: flex; align-items: center; justify-content: space-between; gap: 6px; text-align: left; border: 0; border-left: 3px solid var(--c); background: var(--bg-2); border-radius: 0; padding: 7px 8px; cursor: pointer; color: var(--ink-1); }
+.pal:hover { background: var(--bg-4); }
+.pal .cue { display: flex; align-items: center; gap: 3px; flex: none; }
+.pal .cue i { width: 6px; height: 6px; background: var(--c); }
+.pal.up { justify-content: flex-start; }
+.pal.up .cue { order: -1; margin-right: 2px; }
+.palette.cueing .pal { color: var(--ink-3); border-left-color: var(--hair-2); }
+.palette.cueing .pal.fit { color: var(--ink-1); border-left-color: var(--c); background: var(--bg-4); }
+
+.canvas { position: relative; overflow: hidden; touch-action: none; cursor: grab; background-color: var(--bg-0);
+  background-image: radial-gradient(circle, #343c45 1.3px, transparent 1.7px), radial-gradient(circle, #232930 1px, transparent 1.4px);
+  background-size: 120px 120px, 24px 24px; }
+.canvas.panning { cursor: grabbing; }
+body[data-wk] .canvas { cursor: crosshair; }
+.world { position: absolute; left: 0; top: 0; width: 1px; height: 1px; transform-origin: 0 0; }
+svg.wires { position: absolute; left: -5000px; top: -5000px; width: 15000px; height: 15000px; overflow: visible; pointer-events: none; }
+svg.wires path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+svg.wires path.halo { stroke: var(--bg-0); }
+svg.wires path.su { stroke: var(--accent); }
+svg.wires path.hit { stroke: transparent; stroke-width: 14; pointer-events: stroke; cursor: pointer; }
+svg.wires path.k-traffic { stroke: var(--k-traffic); }
+svg.wires path.k-value { stroke: var(--k-value); }
+svg.wires path.k-event { stroke: var(--k-event); }
+svg.wires path.k-audio { stroke: var(--k-audio); }
+svg.wires path.k-traffic.idle { stroke: var(--i-traffic); }
+svg.wires path.k-value.idle { stroke: var(--i-value); }
+svg.wires path.k-event.idle { stroke: var(--i-event); }
+svg.wires path.k-audio.idle { stroke: var(--i-audio); }
+svg.wires path.core-t { stroke: var(--bg-0); }
+svg.wires path.core-a { stroke: #ffd98a; }
+svg.wires path.core-a.idle { display: none; }
+svg.wires path.temp { stroke: var(--ink-2); stroke-width: 2; stroke-dasharray: 4 4; }
+
+.node { --c: var(--k-traffic); position: absolute; width: 208px; background: var(--bg-2); border: 1px solid var(--hair); border-radius: 2px; cursor: default; user-select: none; -webkit-user-select: none; }
+.node.narrow { width: 132px; }
+.node.sel { outline: 1px solid var(--accent); outline-offset: 2px; }
+.node.lift { box-shadow: 0 10px 24px rgba(0, 0, 0, .55); z-index: 5; }
+.node.warn { border-color: var(--warn); }
+.nh { height: 22px; display: flex; align-items: center; padding: 0 3px 0 8px; background: var(--c); color: var(--bg-0); cursor: move; touch-action: none; }
+.nt { flex: 1; font-size: 11px; font-weight: 700; font-stretch: 100%; letter-spacing: .08em; }
+.nx { width: 16px; height: 16px; border: 0; background: none; color: var(--bg-0); cursor: pointer; font-size: 14px; line-height: 1; padding: 0; border-radius: 2px; }
+.nx:hover { background: var(--bg-0); color: var(--c); }
+.np { display: grid; grid-template-columns: 1fr 1fr; padding: 4px 0; }
+.ins, .outs { display: flex; flex-direction: column; gap: 0; }
+.pr { display: flex; align-items: center; gap: 7px; height: 18px; color: var(--ink-2); white-space: nowrap; }
+.outs .pr { flex-direction: row-reverse; text-align: right; }
+.port { --jc: var(--c); position: relative; width: 14px; height: 14px; border: 2px solid var(--jc); background: var(--bg-3); flex: none; cursor: crosshair; touch-action: none; border-radius: 50%; }
+.ins .port { margin-left: -8px; }
+.outs .port { margin-right: -8px; }
+.port.on { background: var(--jc); }
+.port[data-kind=traffic] { --jc: var(--k-traffic); border-radius: 3px; }
+.port[data-kind=value] { --jc: var(--k-value); }
+.port[data-kind=event] { --jc: var(--k-event); border-radius: 2px; transform: rotate(45deg) scale(.78); }
+.port[data-kind=audio] { --jc: var(--k-audio); border: 0; background: var(--jc); border-radius: 0; clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%); }
+.port[data-kind=audio]::after { content: ""; position: absolute; inset: 3px; background: var(--bg-3); clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%); }
+.port[data-kind=audio].on::after { display: none; }
+.port.psel { outline: 2px solid var(--accent); outline-offset: 2px; }
+.port:hover, .port.hot { outline: 2px solid var(--jc); outline-offset: 2px; }
+body[data-wk] .port[data-io=in] { opacity: .3; }
+body[data-wk=traffic] .port[data-io=in][data-kind=traffic], body[data-wk=value] .port[data-io=in][data-kind=value], body[data-wk=event] .port[data-io=in][data-kind=event], body[data-wk=audio] .port[data-io=in][data-kind=audio] { opacity: 1; outline: 2px solid var(--jc); outline-offset: 2px; }
+
+.nb { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--hair); border-top: 1px solid var(--hair); }
+.nb:empty { display: none; }
+.nb > * { background: var(--bg-2); min-width: 0; }
+.nb > .seg, .nb > .pick, .nb > .wide { grid-column: 1 / -1; }
+.nb > .seg, .nb > .pick { padding: 4px 7px; }
+.nb .seg > label, .nb .pick > label { width: 48px; }
+.mtr { position: relative; height: 8px; margin: 6px 8px 0; background: var(--bg-3); }
+.mtr .fill { position: absolute; inset: 0; clip-path: inset(0 100% 0 0);
+  background: linear-gradient(90deg, #4ade80 0, #4ade80 62.5%, #d8e24a 62.5%, #d8e24a 81.25%, #ffb22e 81.25%, #ffb22e 93.75%, #ff5c3a 93.75%); }
+.mtr .pk { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: var(--ink-1); display: none; }
+.mtr::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0, transparent calc(100% / 30 - 1px), var(--bg-3) calc(100% / 30 - 1px), var(--bg-3) calc(100% / 30)); }
+.nf { height: 20px; padding: 0 8px; border-top: 1px solid var(--hair); display: flex; align-items: center; gap: 7px; font: 400 11px/1 var(--f-mono); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.nf .led { width: 6px; height: 6px; flex: none; background: var(--hair-2); }
+.nf .led.on { background: var(--c); }
+.nf .ro { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nf.wrap { height: auto; padding: 5px 8px; align-items: flex-start; }
+.nf.wrap .led { margin-top: 2px; }
+.nf.wrap .ro { white-space: normal; overflow: visible; line-height: 1.35; }
+.nf .wn { color: var(--warn); margin-top: 2px; }
+
+.zoom { position: absolute; right: 10px; bottom: 10px; display: flex; gap: 1px; }
+.zoom .btn { height: 24px; padding: 0 9px; }
+.toast { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); max-width: min(560px, calc(100% - 32px));
+  background: var(--bg-4); border: 1px solid var(--hair-2); color: var(--ink-1); padding: 9px 12px; border-radius: 2px; display: flex; gap: 12px; align-items: center; font-size: 12.5px; }
+
+.side { border-left: 1px solid var(--hair); background: var(--bg-1); overflow-y: auto; display: flex; flex-direction: column; scrollbar-width: thin; scrollbar-color: var(--hair-2) transparent; }
+.side section { border-bottom: 1px solid var(--hair); }
+.side h2 { margin: 0; height: 22px; padding: 0 10px; background: var(--bg-2); border-bottom: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 10px; color: var(--ink-2); }
+.side h2 > span:not(.seg) { font: 400 10px/1 var(--f-mono); letter-spacing: 0; text-transform: none; color: var(--ink-2); }
+.side h2 .seg .cells { height: 16px; }
+.side h2 .seg button { height: 14px; padding: 0 5px; font-size: 9px; }
+.scopebox { padding: 10px; }
+#scope { width: 100%; aspect-ratio: 1; display: block; background: var(--scope); border: 1px solid var(--hair); cursor: pointer; }
+.insp .body { padding: 10px 12px 12px; }
+.insp h3 { margin: 0 0 6px; font: 700 12px/1 var(--f-eng); letter-spacing: .08em; text-transform: uppercase; }
+.insp p { margin: 0 0 8px; color: var(--ink-1); font-size: 12.5px; }
+.insp details { margin: 0; }
+.insp summary { cursor: pointer; color: var(--ink-2); list-style: none; padding: 2px 0; }
+.insp summary::-webkit-details-marker { display: none; }
+.insp summary::before { content: "▸ "; }
+.insp details[open] summary::before { content: "▾ "; }
+.insp details p { margin: 6px 0 0; color: var(--ink-2); font-size: 12px; }
+.insp .hint { display: block; margin: 0 0 7px; color: var(--ink-2); font: 400 11px/1.4 var(--f-mono); letter-spacing: 0; text-transform: none; }
+.key { padding: 8px 12px 10px; display: grid; grid-template-columns: 40px 1fr; gap: 7px 10px; align-items: center; }
+.key svg { display: block; overflow: visible; }
+.key span { color: var(--ink-2); }
+.takes { padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+.take { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; align-items: center; font: 400 11px/1 var(--f-mono); color: var(--ink-2); }
+.take .acts { display: flex; gap: 4px; }
+.take .btn { height: 24px; padding: 0 8px; }
+.take audio { grid-column: 1 / -1; width: 100%; height: 32px; color-scheme: dark; }
+.empty { color: var(--ink-2); font: 400 11px/1.4 var(--f-mono); margin: 0; }
+details.takesbox > summary { height: 22px; padding: 0 10px; background: var(--bg-2); border-bottom: 1px solid var(--hair); display: flex; align-items: center; justify-content: space-between; cursor: pointer; list-style: none; font: 600 10px/1 var(--f-eng); font-stretch: 85%; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+details.takesbox > summary::-webkit-details-marker { display: none; }
+details.takesbox > summary span { font: 400 10px/1 var(--f-mono); }
+
+.modal { position: fixed; inset: 0; background: rgba(5, 7, 9, .72); display: grid; place-items: center; padding: 16px; z-index: 10; }
+.modal .box { background: var(--bg-1); border: 1px solid var(--hair-2); border-radius: 2px; padding: 14px; width: min(640px, 100%); display: flex; flex-direction: column; gap: 10px; }
+.modal h2 { margin: 0; font: 700 12px/1 var(--f-eng); letter-spacing: .1em; text-transform: uppercase; }
+.modal textarea { width: 100%; height: 260px; font: 12px/1.4 var(--f-mono); border: 1px solid var(--hair); border-radius: 2px; background: var(--bg-3); color: var(--ink-1); padding: 8px; resize: vertical; }
+.modal .row { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; align-items: center; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; font: 500 12px var(--f-mono); color: var(--ink-2); }
+
+@media (max-width: 980px) {
+  .main { grid-template-columns: 124px minmax(0, 1fr); }
+  .side { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--hair); display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); overflow: visible; }
+  body { overflow: auto; }
+  .app { height: auto; min-height: 100%; }
+  .main { grid-template-rows: 70vh auto; }
+}
+@media (max-width: 620px) {
+  .main { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 64vh auto; }
+  .palette { flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--hair); gap: 12px; }
+  .palette > div { flex: none; }
+}
+</style>
+
+<div class="app">
+  <header class="bar">
+    <div class="brand">PITCHAXIS</div>
+    <button class="ib play" id="play" aria-pressed="false" aria-label="Play" title="Play (space)">▶</button>
+    <button class="ib rec" id="rec" aria-pressed="false" aria-label="Record" title="Record what comes out of Output">●</button>
+    <div class="disp"><span class="clock" id="clock">--:--:--Z</span><input type="range" id="scrub" min="0" max="1790" step="1" value="0" aria-label="Position in the capture"></div>
+    <div class="pick"><label for="capture">Sky</label><div class="well"><button data-d="-1" aria-label="Previous capture">◂</button><span class="v"></span><button data-d="1" aria-label="Next capture">▸</button>
+      <select id="capture" class="ed" aria-label="Capture to replay">
+        <option value="push">Sep 9 · 13:45 EDT</option>
+        <option value="quiet">Sep 9 · 11:13 EDT</option>
+      </select></div></div>
+    <div class="seg"><label>Replay</label><div class="cells" role="group" aria-label="Replay speed"><button data-v="1">1×</button><button data-v="2">2×</button><button data-v="4">4×</button><button data-v="8">8×</button><button data-v="16">16×</button></div>
+      <select id="speed" class="ed" hidden aria-label="Replay speed"><option value="1">1×</option><option value="2">2×</option><option value="4" selected>4×</option><option value="8">8×</option><option value="16">16×</option></select></div>
+    <div class="ctl scrub" id="bpmtile" data-kind="scrub" data-min="30" data-max="240" data-step="1" data-def="96" tabindex="0" role="spinbutton" aria-label="Tempo in beats per minute">
+      <div class="tx"><label for="bpm">Tempo</label><span class="v"><b>96</b><em>bpm</em></span></div>
+      <input class="ed" id="bpm" type="number" min="30" max="240" step="1" value="96" tabindex="-1">
+    </div>
+    <div class="spacer"></div>
+    <div class="pick menu"><div class="well"><span class="v">Load example ▾</span>
+      <select id="preset" class="ed" aria-label="Load an example patch">
+        <option value="">Load example…</option>
+        <option value="director">Radar director</option>
+        <option value="ping">Range ping</option>
+        <option value="chimes">Approach chimes</option>
+        <option value="drone">Sky drone</option>
+        <option value="levels">Flight levels</option>
+        <option value="duet">Duet</option>
+        <optgroup label="Ground, and arms to listen against">
+        <option value="ground">Ground</option>
+        <option value="groundclock">Ground on a clock</option>
+        <option value="groundshift">Ground, shifted sky</option>
+        <option value="groundstrum">Ground, strummed</option>
+        <option value="groundthin">Ground, thinned</option>
+        <option value="groundled">Ground, voice-led</option>
+        <option value="groundcast">Cast only, no Ground</option>
+        </optgroup>
+        <option value="blank">Blank</option>
+      </select></div></div>
+    <button class="btn" id="undo" title="Undo (Ctrl or Cmd Z)" disabled>Undo</button>
+    <button class="btn" id="redo" title="Redo (Ctrl or Cmd Shift Z)" disabled>Redo</button>
+    <button class="btn" id="export" title="Export patch">Export</button>
+    <button class="btn" id="import" title="Import patch">Import</button>
+  </header>
+
+  <div class="main">
+    <nav class="palette" id="palette" aria-label="Blocks"></nav>
+    <section class="canvas" id="canvas" aria-label="Patch">
+      <div class="world" id="world"><svg class="wires" id="wires"></svg></div>
+      <div class="loading" id="loading">unpacking the sky…</div>
+      <div class="zoom"><button class="btn" id="zout" aria-label="Zoom out">−</button><button class="btn" id="zfit">Fit</button><button class="btn" id="zin" aria-label="Zoom in">+</button></div>
+      <div class="toast" id="toast" hidden></div>
+    </section>
+    <aside class="side">
+      <section>
+        <h2>Scope <span class="seg" id="range"><span class="cells"><button data-nm="30">30</button><button data-nm="60">60</button><button data-nm="120">120</button></span></span><span id="scopeinfo"></span></h2>
+        <div class="scopebox"><canvas id="scope" width="560" height="560" title="Click to change the range" aria-label="Radar scope of the replayed sky. Click to change the range."></canvas></div>
+      </section>
+      <section class="insp" id="insp" aria-live="polite"></section>
+      <section>
+        <h2>Key</h2>
+        <div class="key">
+          <svg width="40" height="12" title="Aircraft"><path d="M3 6H37" stroke="#35d6b4" stroke-width="7" stroke-linecap="round"/><path d="M3 6H37" stroke="#1a1e23" stroke-width="3" stroke-linecap="round"/></svg><span title="A whole set of aircraft, every field attached">Aircraft</span>
+          <svg width="40" height="12"><path d="M3 6H37" stroke="#5a93ff" stroke-width="2" stroke-linecap="round"/></svg><span title="A number per aircraft, or one number">Value</span>
+          <svg width="40" height="12"><path d="M3 6H37" stroke="#ff5aa5" stroke-width="3.5" stroke-linecap="round" stroke-dasharray=".1 8"/></svg><span title="A moment: when to play">Event</span>
+          <svg width="40" height="12"><path d="M3 6H37" stroke="#ffb22e" stroke-width="4" stroke-linecap="round"/><path d="M3 6H37" stroke="#ffd98a" stroke-width="1" stroke-linecap="round"/></svg><span title="Sound. Audio inputs mix">Audio</span>
+        </div>
+      </section>
+      <details class="takesbox" open>
+        <summary>Takes <span id="takecount">0</span></summary>
+        <div class="takes" id="takes"><p class="empty">Press ● while playing. Each take lands here.</p></div>
+      </details>
+    </aside>
+  </div>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="box" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <h2 id="mtitle">Patch</h2>
+    <textarea id="mtext" spellcheck="false" aria-label="Patch JSON"></textarea>
+    <div class="row">
+      <span class="lbl" id="mnote" style="margin-right:auto"></span>
+      <input type="file" id="mfile" accept=".json,application/json" hidden>
+      <button class="btn" id="mfilebtn">Open file…</button>
+      <button class="btn" id="mcopy">Copy</button>
+      <button class="btn" id="msave">Save .json</button>
+      <button class="btn primary" id="mload">Load</button>
+      <button class="btn" id="mclose">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>/*DATA*/</script>
+<script>/*APP*/</script>

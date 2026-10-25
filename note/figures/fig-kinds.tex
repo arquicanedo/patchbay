@@ -1,0 +1,30 @@
+% The four kinds of connection and the blocks that join them. Needs tikz and the arrows.meta library.
+\begin{tikzpicture}[
+  >=Stealth,
+  kind/.style={rounded corners=2pt, draw, thick, minimum width=3.2cm, minimum height=1.3cm, align=center, inner sep=4pt},
+  lab/.style={font=\scriptsize\sffamily, align=center, fill=white, inner sep=1.5pt},
+  src/.style={font=\scriptsize\sffamily, text=black!70},
+  arr/.style={->, thick, black!65}]
+\definecolor{kA}{RGB}{20,150,128}
+\definecolor{kV}{RGB}{60,110,230}
+\definecolor{kE}{RGB}{225,50,120}
+\definecolor{kU}{RGB}{225,150,20}
+\node[kind, draw=kA, fill=kA!13] (A) at (0,0) {\textbf{Aircraft set}\\[2pt]\scriptsize\sffamily keeps its kind: Select,\\\scriptsize\sffamily Closest pair, Level-off};
+\node[kind, draw=kV, fill=kV!13] (V) at (6.1,1.9) {\textbf{Value}\\[2pt]\scriptsize\sffamily keeps its kind: Map, Scale, Ground,\\\scriptsize\sffamily Pan, Glide, Math, Summary};
+\node[kind, draw=kE, fill=kE!13] (E) at (6.1,-1.9) {\textbf{Event}\\[2pt]\scriptsize\sffamily keeps its kind: Quantize, Changed};
+\node[kind, draw=kU, fill=kU!13] (U) at (13.4,0) {\textbf{Audio}\\[2pt]\scriptsize\sffamily keeps its kind: Filter, Echo,\\\scriptsize\sffamily Reverb, Level};
+\draw[arr] (A.east) -- node[lab, pos=.5] {Read,\\Closest pair} (V.west);
+\draw[arr] (A.east) -- node[lab, pos=.5] {Radar sweep,\\Enter/exit,\\Closest pair,\\Level-off} (E.west);
+\draw[arr] (V.south) -- node[lab, pos=.5] {Threshold,\\Rate limit,\\Pulse} (E.north);
+\draw[arr] ([xshift=0.35cm]E.north west) -- node[lab, pos=.5] {Ground:\\next chord} ([xshift=0.35cm]V.south west);
+\draw[arr] (V.east) -- node[lab, pos=.5] {Voice:\\note, loudness, pan} (U.west);
+\draw[arr] (E.east) -- node[lab, pos=.5] {Voice:\\play} (U.west);
+\node[src] (sky) at (0,2.1) {Sky};
+\node[src] (nb) at (6.1,3.85) {Number};
+\node[src] (ev) at (6.1,-3.85) {Every};
+\node[src] (out) at (13.4,-2.1) {Output: speakers and files};
+\draw[arr] (sky) -- (A.north);
+\draw[arr] (nb) -- (V.north);
+\draw[arr] (ev) -- (E.south);
+\draw[arr] (U.south) -- (out);
+\end{tikzpicture}

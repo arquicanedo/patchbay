@@ -8,7 +8,8 @@ the technical note *Patchbay: a block model for the sonification of ADS-B aircra
 
 ## Try it
 
-Open `editor/pitchaxis-patchbay.html` in a browser. It is one file and needs no server. It replays two 30-minute
+Open https://arquicanedo.github.io/patchbay/, or open `editor/pitchaxis-patchbay.html` from a clone in a browser. It
+is one file and needs no server. It replays two 30-minute
 captures from a receiver in central New Jersey, recorded on 9 September 2026.
 
 ## What is here

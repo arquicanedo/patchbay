@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use Patchbay, please cite the technical note below."
+title: "Patchbay"
+abstract: "A block editor for turning recorded ADS-B aircraft data into sound."
+type: software
+authors:
+  - family-names: Canedo
+    given-names: Arquimedes
+    affiliation: Independent Researcher
+license: MIT
+repository-code: "https://github.com/arquicanedo/patchbay"
+url: "https://arquicanedo.github.io/patchbay/"
+date-released: "2026-10-25"
+keywords:
+  - sonification
+  - auditory display
+  - ADS-B
+  - air traffic
+  - visual programming
+  - dataflow
+  - music technology
+  - MIDI
+  - Web Audio
+preferred-citation:
+  type: report
+  title: "Patchbay: a block model for the sonification of ADS-B aircraft data"
+  notes: "Technical note"
+  authors:
+    - family-names: Canedo
+      given-names: Arquimedes
+      affiliation: Independent Researcher
+  year: 2026
+  month: 10
+  publisher:
+    name: Zenodo
+  doi: "10.5281/zenodo.23647089"
+  url: "https://doi.org/10.5281/zenodo.23647089"
+  license: CC-BY-4.0

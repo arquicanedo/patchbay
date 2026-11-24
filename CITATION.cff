@@ -35,4 +35,8 @@ preferred-citation:
     name: Zenodo
   doi: "10.5281/zenodo.23647089"
   url: "https://doi.org/10.5281/zenodo.23647089"
+  identifiers:
+    - type: url
+      value: "https://arxiv.org/abs/2611.10973"
+      description: "The same note on arXiv (arXiv:2611.10973)"
   license: CC-BY-4.0

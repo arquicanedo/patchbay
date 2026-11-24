@@ -1462,8 +1462,8 @@ function markPalette() {
     b.querySelector('.cue').innerHTML = fits.map((k) => `<i style="--c:var(--k-${k})"></i>`).join('');
     b.classList.toggle('fit', fits.length > 0);
     b.classList.toggle('up', fits.length > 0 && up);
-    const why = up ? `feeds the selected ${fits.join(' / ')} input` : `takes the selected block's ${fits.join(' / ')}`;
-    b.title = fits.length ? `${T.doc} — ${why}` : T.doc;
+    const why = up ? `Feeds the selected ${fits.join(' / ')} input.` : `Takes the selected block's ${fits.join(' / ')}.`;
+    b.title = fits.length ? `${T.doc} ${why}` : T.doc;
   });
 }
 function renderInspector() {

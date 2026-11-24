@@ -1,4 +1,4 @@
-<title>pitchaxis patchbay</title>
+<title>Patchbay: aircraft position reports, played as music</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..700&family=Chivo+Mono:wght@400;500&display=swap">
 <style>
@@ -25,7 +25,7 @@ button, select, input { font: inherit; color: inherit; }
 :focus-visible { outline: 1px solid var(--accent); outline-offset: 1px; }
 
 /* engraved: every static label */
-.lbl, .brand, .pr, .palette h3, .pal, .side h2, .ctl label, .seg > label, .pick > label, .btn, .ib, .nt, .seg button, .key span, .insp summary, .insp .hint {
+.lbl, .brand, .refs, .pr, .palette h3, .pal, .side h2, .ctl label, .seg > label, .pick > label, .btn, .ib, .nt, .seg button, .key span, .insp summary, .insp .hint {
   font-family: var(--f-eng); font-weight: 600; font-stretch: 85%; font-size: 10px; line-height: 1; text-transform: uppercase; letter-spacing: .06em;
 }
 
@@ -34,6 +34,11 @@ button, select, input { font: inherit; color: inherit; }
 .bar::-webkit-scrollbar { display: none; }
 .bar > * { flex: none; }
 .brand { font-size: 14px; font-stretch: 100%; font-weight: 700; letter-spacing: .12em; margin-right: 4px; }
+.mast { display: flex; flex-direction: column; gap: 5px; margin-right: 4px; }
+.mast .brand { margin-right: 0; }
+.refs { display: flex; gap: 8px; color: var(--ink-2); text-transform: none; letter-spacing: .02em; }
+.refs a { color: var(--ink-2); text-decoration: none; }
+.refs a:hover { color: var(--ink-1); }
 .spacer { flex: 1 1 0 !important; min-width: 0; }
 .btn { height: 26px; padding: 0 10px; border: 1px solid var(--hair-2); background: var(--bg-2); border-radius: 2px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .btn:hover:not(:disabled) { background: var(--bg-4); }
@@ -249,7 +254,10 @@ details.takesbox > summary span { font: 400 10px/1 var(--f-mono); }
 
 <div class="app">
   <header class="bar">
-    <div class="brand">PITCHAXIS</div>
+    <div class="mast">
+      <div class="brand">PATCHBAY</div>
+      <nav class="refs" aria-label="About Patchbay"><a href="https://labs.sector.mx/">&larr; Labs</a><a href="https://github.com/arquicanedo/patchbay" target="_blank" rel="noopener" title="The code, the captures and the note source">GitHub</a><a href="https://arxiv.org/abs/2611.10973" target="_blank" rel="noopener" title="The technical note, arXiv:2611.10973">arXiv</a></nav>
+    </div>
     <button class="ib play" id="play" aria-pressed="false" aria-label="Play" title="Play (space)">▶</button>
     <button class="ib rec" id="rec" aria-pressed="false" aria-label="Record" title="Record what comes out of Output">●</button>
     <div class="disp"><span class="clock" id="clock">--:--:--Z</span><input type="range" id="scrub" min="0" max="1790" step="1" value="0" aria-label="Position in the capture"></div>
